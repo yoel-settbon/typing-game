@@ -1,12 +1,10 @@
 import pygame
 import random
-import math
 
 pygame.init()
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 500
-
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Zombie Slicer")
 
@@ -24,12 +22,12 @@ zombies_images = [
     pygame.image.load("assets/images/zombies/zombie3.png"),
     pygame.image.load("assets/images/zombies/zombie4.png")
 ]
-zombies_width = 50
-zombies_height = 50
 
 tittle_font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 70)
 font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 40)
-lives = 3
+game_font = pygame.font.Font("assets/images/font/Impacted2.0.ttf", 30)
+
+lives = 5
 score = 0
 zombies = ["zombie1", "zombie2", "zombie3", "zombie4"]
 bonus = ["zombie5", "zombie6", "icecube"]
@@ -37,11 +35,27 @@ bonus = ["zombie5", "zombie6", "icecube"]
 def draw_text(text, font, color, x, y):
     text_surf = font.render(text, True, color)
     text_rect = text_surf.get_rect(center=(x, y))
-    window.blit(text_surf, text_rect) 
+    window.blit(text_surf, text_rect)
+
+def play_game():
+    global lives, score
+    window.blit(background_image, (0, 0))
+    draw_text(f"Score: {score}", game_font, YELLOW, WINDOW_WIDTH // 1.1, 20)
+    draw_text(f"Lives: {lives}", game_font, YELLOW, WINDOW_WIDTH // 11, 20)
+    for i, zombie_image in enumerate(zombies_images):
+        zombie_rect = zombie_image.get_rect(center=(random.randint(50, WINDOW_WIDTH - 50), random.randint(50, WINDOW_HEIGHT - 50)))
+        window.blit(zombie_image, zombie_rect)
+    pygame.display.update()
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
 def menu():
     window.blit(background_image, (0, 0))
-    draw_text("READY FOR ZOMBIE SLICER ?!",tittle_font, RED, WINDOW_WIDTH // 2.5, 50)
+    draw_text("READY FOR ZOMBIE SLICER ?!",tittle_font, RED, WINDOW_WIDTH // 2.4, 50)
     draw_text("Play Game", font, RED, WINDOW_WIDTH // 10, 150)
     draw_text("Score", font, RED, WINDOW_WIDTH // 16, 200)
     draw_text("Quit", font, RED, WINDOW_WIDTH // 18, 250)
@@ -67,8 +81,7 @@ def menu():
                 mouse_x, mouse_y = event.pos
                 if 0 <= mouse_x <= 200:
                     if 130 <= mouse_y <= 170:
-                
-                        waiting_input = False
+                        play_game()
                     elif 180 <= mouse_y <= 220:
                         
                         pass
@@ -77,5 +90,3 @@ def menu():
                         pygame.quit()
                         exit()
 menu()
-
-
