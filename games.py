@@ -52,12 +52,20 @@ def menu():
 
     while waiting_input :
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEMOTION:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                if 10 <= mouse_x <= 150 :
+                    if 130 <= mouse_y <= 170 :
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                    elif 180 <= mouse_y <= 220 :
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                    elif 230 <= mouse_y <= 270 :
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+                else : 
+                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = event.pos
-                if 300 <= mouse_x <= 500:
+                if 0 <= mouse_x <= 200:
                     if 130 <= mouse_y <= 170:
                 
                         waiting_input = False
