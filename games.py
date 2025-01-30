@@ -21,7 +21,9 @@ zombies_images = [
     pygame.image.load("assets/images/zombies/zombie1.png"),
     pygame.image.load("assets/images/zombies/zombie2.png"),
     pygame.image.load("assets/images/zombies/zombie3.png"),
-    pygame.image.load("assets/images/zombies/zombie4.png")
+    pygame.image.load("assets/images/zombies/zombie4.png"),
+    pygame.image.load("assets/images/zombies/zombie-bonus.png"),
+    pygame.image.load("assets/images/zombies/zombie-jet-pack.png")
 ]
 
 tittle_font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 70)
@@ -30,8 +32,8 @@ game_font = pygame.font.Font("assets/images/font/Impacted2.0.ttf", 30)
 display_font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 25)
 
 FPS = 20
-zombies = ["zombie1", "zombie2", "zombie3", "zombie4"]
-bonus = ["zombie5", "zombie6", "icecube"]
+zombies = ["zombie1", "zombie2", "zombie3", "zombie4", "zombie5", "zombie6"]
+bonus = ["icecube"]
 
 def draw_text(text, font, color, x, y):
     text_surf = font.render(text, True, color)
@@ -72,8 +74,8 @@ def play_game():
         zombie_image = random.choice(zombies_images)
         zombie_x = random.randint(150, WINDOW_WIDTH - 150)
         zombie_y = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 70)
-        speed_up = random.uniform(0.09, 0.12)
-        speed_down = random.uniform(0.18, 0.24)
+        speed_up = random.uniform(0.1, 0.18)
+        speed_down = random.uniform(0.19, 0.27)
         letter = chr(random.randint(65, 90))
         zombie_list.append({
             "image": zombie_image, 
@@ -117,17 +119,22 @@ def play_game():
                         if lives == 0:
                             game_over()
 
-        for zombie in zombie_list:
+        for zombie in zombie_list[:]:
             if zombie["direction"] == "up":
                 zombie["y"] -= zombie["speed_up"] 
                 if zombie["y"] < WINDOW_HEIGHT // 4:
                     zombie["direction"] = "down"  
             elif zombie["direction"] == "down":
                 zombie["y"] += zombie["speed_down"]
-                if zombie["y"] > WINDOW_HEIGHT + 50: 
-                    zombie["direction"] = "up" 
-                    zombie["y"] = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 150) 
+                if zombie["y"] > WINDOW_HEIGHT + 50:  # Si le zombie est hors de l'écran
+                    zombie_list.remove(zombie)  # Retirer le zombie de la liste
+                    lives -= 1  # Retirer une vie
+                    if lives == 0:
+                        game_over()  # Si plus de vies, fin du jeu
+                    spawn_zombie()  # Faire apparaître un nouveau zombie
+                    break  # Sortir de la boucle pour ne pas modifier plusieurs zombies en même temps
 
+    # Sauvegarde du score après la fin du jeu
     try:
         with open("scores.json", "r") as file:
             scores = json.load(file)
