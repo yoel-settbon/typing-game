@@ -29,8 +29,9 @@ font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 40)
 game_font = pygame.font.Font("assets/images/font/Impacted2.0.ttf", 30)
 display_font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 25)
 
+FPS = 60
 lives = 5
-score = 0
+score = 500
 zombies = ["zombie1", "zombie2", "zombie3", "zombie4"]
 bonus = ["zombie5", "zombie6", "icecube"]
 
@@ -42,9 +43,9 @@ def draw_text(text, font, color, x, y):
 def play_game():
     global lives, score
     window.blit(background_image, (0, 0))
-    draw_text("Press ECHAP to go back to the MENU", display_font, RED, WINDOW_WIDTH // 2, 15)
-    draw_text(f"Score: {score}", game_font, YELLOW, WINDOW_WIDTH // 1.1, 20)
-    draw_text(f"Lives: {lives}", game_font, YELLOW, WINDOW_WIDTH // 11, 20)
+    draw_text("Press ECHAP to go back to the MENU", display_font, YELLOW, WINDOW_WIDTH // 2, 15)
+    draw_text(f"Score: {score}", game_font, RED, WINDOW_WIDTH // 1.1, 20)
+    draw_text(f"Lives: {lives}", game_font, RED, WINDOW_WIDTH // 13.5, 20)
     
     pygame.display.update()
 
@@ -72,8 +73,8 @@ def history():
         for entry in scores:
             draw_text(f"Score: {entry['score']}", game_font, RED, WINDOW_WIDTH // 6, 100)
 
-        draw_text("Press 'D' to delete history", game_font, YELLOW, WINDOW_WIDTH // 1.3, 40)
-        draw_text("Press ECHAP to go back to the MENU", game_font, YELLOW, WINDOW_WIDTH // 2, 470)
+        draw_text("Press 'D' to delete history", game_font, YELLOW, WINDOW_WIDTH // 1.3, 45)
+        draw_text("Press ECHAP to go back to the MENU", display_font, YELLOW, WINDOW_WIDTH // 2, 470)
 
         pygame.display.update()
 
