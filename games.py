@@ -29,7 +29,7 @@ font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 40)
 game_font = pygame.font.Font("assets/images/font/Impacted2.0.ttf", 30)
 display_font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 25)
 
-FPS = 1
+FPS = 20
 zombies = ["zombie1", "zombie2", "zombie3", "zombie4"]
 bonus = ["zombie5", "zombie6", "icecube"]
 
@@ -48,7 +48,7 @@ def game_over():
 
     waiting_input = True
 
-    while waiting_input == True:
+    while waiting_input:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
@@ -65,15 +65,25 @@ def play_game():
     draw_text("Press ECHAP to go back to the MENU", display_font, YELLOW, WINDOW_WIDTH // 2, 15)
     draw_text(f"Score: {score}", game_font, RED, WINDOW_WIDTH // 1.1, 20)
     draw_text(f"Lives: {lives}", game_font, RED, WINDOW_WIDTH // 13.5, 20)
-    zombie_speed = 5
+    
     zombie_list = []
 
     def spawn_zombie():
         zombie_image = random.choice(zombies_images)
         zombie_x = random.randint(150, WINDOW_WIDTH - 150)
-        zombie_y = random.randint(150, WINDOW_HEIGHT - 150)
+        zombie_y = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 70)
+        speed_up = random.uniform(0.09, 0.12)
+        speed_down = random.uniform(0.18, 0.24)
         letter = chr(random.randint(65, 90))
-        zombie_list.append({"image": zombie_image, "x": zombie_x, "y": zombie_y, "letter": letter})
+        zombie_list.append({
+            "image": zombie_image, 
+            "x": zombie_x, 
+            "y": zombie_y, 
+            "letter": letter, 
+            "speed_up": speed_up,
+            "speed_down": speed_down, 
+            "direction": "up"
+        })
 
     def draw_zombies():
         for zombie in zombie_list:
@@ -108,13 +118,16 @@ def play_game():
                             game_over()
 
         for zombie in zombie_list:
-            zombie["y"] -= zombie_speed
-            if zombie["y"] > WINDOW_HEIGHT:
-                zombie_list.remove(zombie)
-                lives -= 1
-                if lives == 0:
-                    spawn_zombie()
-                
+            if zombie["direction"] == "up":
+                zombie["y"] -= zombie["speed_up"] 
+                if zombie["y"] < WINDOW_HEIGHT // 4:
+                    zombie["direction"] = "down"  
+            elif zombie["direction"] == "down":
+                zombie["y"] += zombie["speed_down"]
+                if zombie["y"] > WINDOW_HEIGHT + 50: 
+                    zombie["direction"] = "up" 
+                    zombie["y"] = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 150) 
+
     try:
         with open("scores.json", "r") as file:
             scores = json.load(file)
@@ -128,39 +141,39 @@ def play_game():
     
     pygame.display.update()
 
-     
 def history():
-        window.blit(background_image, (0, 0))
-        draw_text("SCORE HISTORY", tittle_font, RED, WINDOW_WIDTH // 4, 50)
+    window.blit(background_image, (0, 0))
+    draw_text("SCORE HISTORY", tittle_font, RED, WINDOW_WIDTH // 4, 50)
 
-        try:
-            with open("scores.json", "r") as file:
-                scores = json.load(file)
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_d]:
-                with open("scores.json", "w") as file:
-                    json.dump([], file)
-                scores = []
-        except FileNotFoundError:
+    try:
+        with open("scores.json", "r") as file:
+            scores = json.load(file)
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_d]:
+            with open("scores.json", "w") as file:
+                json.dump([], file)
             scores = []
-        for entry in scores:
-            draw_text(f"Score: {entry['score']}", game_font, RED, WINDOW_WIDTH // 6, 100)
+    except FileNotFoundError:
+        scores = []
 
-        draw_text("Press 'D' to delete history", game_font, YELLOW, WINDOW_WIDTH // 1.3, 45)
-        draw_text("Press ECHAP to go back to the MENU", display_font, YELLOW, WINDOW_WIDTH // 2, 470)
+    for entry in scores:
+        draw_text(f"Score: {entry['score']}", game_font, RED, WINDOW_WIDTH // 6, 100)
 
-        pygame.display.update()
+    draw_text("Press 'D' to delete history", game_font, YELLOW, WINDOW_WIDTH // 1.3, 45)
+    draw_text("Press ECHAP to go back to the MENU", display_font, YELLOW, WINDOW_WIDTH // 2, 470)
 
-        waiting_input = True
-        while waiting_input:
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        menu()
+    pygame.display.update()
+
+    waiting_input = True
+    while waiting_input:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    menu()
 
 def menu():
     window.blit(background_image, (0, 0))
-    draw_text("READY FOR ZOMBIE SLICER ?!",tittle_font, RED, WINDOW_WIDTH // 2.4, 50)
+    draw_text("READY FOR ZOMBIE SLICER ?!", tittle_font, RED, WINDOW_WIDTH // 2.4, 50)
     draw_text("Play Game", font, RED, WINDOW_WIDTH // 10, 150)
     draw_text("Score", font, RED, WINDOW_WIDTH // 16, 200)
     draw_text("Quit", font, RED, WINDOW_WIDTH // 18, 250)
@@ -169,18 +182,18 @@ def menu():
 
     waiting_input = True
 
-    while waiting_input :
+    while waiting_input:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEMOTION:
                 mouse_x, mouse_y = pygame.mouse.get_pos()
-                if 10 <= mouse_x <= 150 :
-                    if 130 <= mouse_y <= 170 :
+                if 10 <= mouse_x <= 150:
+                    if 130 <= mouse_y <= 170:
                         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-                    elif 180 <= mouse_y <= 220 :
+                    elif 180 <= mouse_y <= 220:
                         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-                    elif 230 <= mouse_y <= 270 :
+                    elif 230 <= mouse_y <= 270:
                         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-                else : 
+                else: 
                     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = event.pos
@@ -190,7 +203,7 @@ def menu():
                     elif 180 <= mouse_y <= 220:
                         history()
                     elif 230 <= mouse_y <= 270:
-                        
                         pygame.quit()
                         exit()
+
 menu()
