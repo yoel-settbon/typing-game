@@ -27,6 +27,7 @@ zombies_images = [
 tittle_font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 70)
 font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 40)
 game_font = pygame.font.Font("assets/images/font/Impacted2.0.ttf", 30)
+display_font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 25)
 
 lives = 5
 score = 0
@@ -41,6 +42,7 @@ def draw_text(text, font, color, x, y):
 def play_game():
     global lives, score
     window.blit(background_image, (0, 0))
+    draw_text("Press ECHAP to go back to the MENU", display_font, RED, WINDOW_WIDTH // 2, 15)
     draw_text(f"Score: {score}", game_font, YELLOW, WINDOW_WIDTH // 1.1, 20)
     draw_text(f"Lives: {lives}", game_font, YELLOW, WINDOW_WIDTH // 11, 20)
     
@@ -49,8 +51,10 @@ def play_game():
     running = True
     while running:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    menu()
+                
 def history():
         window.blit(background_image, (0, 0))
         draw_text("SCORE HISTORY", tittle_font, RED, WINDOW_WIDTH // 4, 50)
@@ -69,16 +73,17 @@ def history():
             draw_text(f"Score: {entry['score']}", game_font, RED, WINDOW_WIDTH // 6, 100)
 
         draw_text("Press 'D' to delete history", game_font, YELLOW, WINDOW_WIDTH // 1.3, 40)
+        draw_text("Press ECHAP to go back to the MENU", game_font, YELLOW, WINDOW_WIDTH // 2, 470)
 
         pygame.display.update()
 
         waiting_input = True
         while waiting_input:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    waiting_input = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    waiting_input = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        menu()
+
 def menu():
     window.blit(background_image, (0, 0))
     draw_text("READY FOR ZOMBIE SLICER ?!",tittle_font, RED, WINDOW_WIDTH // 2.4, 50)
