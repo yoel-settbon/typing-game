@@ -1,5 +1,6 @@
 import pygame
 import random
+import json
 
 pygame.init()
 
@@ -42,9 +43,7 @@ def play_game():
     window.blit(background_image, (0, 0))
     draw_text(f"Score: {score}", game_font, YELLOW, WINDOW_WIDTH // 1.1, 20)
     draw_text(f"Lives: {lives}", game_font, YELLOW, WINDOW_WIDTH // 11, 20)
-    for i, zombie_image in enumerate(zombies_images):
-        zombie_rect = zombie_image.get_rect(center=(random.randint(50, WINDOW_WIDTH - 50), random.randint(50, WINDOW_HEIGHT - 50)))
-        window.blit(zombie_image, zombie_rect)
+    
     pygame.display.update()
 
     running = True
@@ -52,7 +51,34 @@ def play_game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+def history():
+        window.blit(background_image, (0, 0))
+        draw_text("SCORE HISTORY", tittle_font, RED, WINDOW_WIDTH // 4, 50)
 
+        try:
+            with open("scores.json", "r") as file:
+                scores = json.load(file)
+        except FileNotFoundError:
+            scores = []
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_d]:
+                with open("scores.json", "w") as file:
+                    json.dump([], file)
+                scores = []
+        for entry in scores:
+            draw_text(f"Score: {entry['score']}", game_font, RED, WINDOW_WIDTH // 6, 100)
+
+        draw_text("Press 'D' to delete history", game_font, YELLOW, WINDOW_WIDTH // 1.3, 40)
+
+        pygame.display.update()
+
+        waiting_input = True
+        while waiting_input:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    waiting_input = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    waiting_input = False
 def menu():
     window.blit(background_image, (0, 0))
     draw_text("READY FOR ZOMBIE SLICER ?!",tittle_font, RED, WINDOW_WIDTH // 2.4, 50)
@@ -83,8 +109,7 @@ def menu():
                     if 130 <= mouse_y <= 170:
                         play_game()
                     elif 180 <= mouse_y <= 220:
-                        
-                        pass
+                        history()
                     elif 230 <= mouse_y <= 270:
                         
                         pygame.quit()

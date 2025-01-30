@@ -8,7 +8,7 @@ WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 500
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Zombie Slicer")
-
+FPS = 30
 WHITE = (255, 255, 255)
 RED = (209, 10, 10)
 YELLOW = (255, 178, 0)
@@ -17,6 +17,7 @@ BLACK = (0, 0, 0)
 background_image = pygame.image.load("assets/images/backgrounds/game.jpg")
 background_image = pygame.transform.scale(background_image, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
+clock = pygame.time.Clock()
 zombies_images = [
     pygame.image.load("assets/images/zombies/zombie1.png"),
     pygame.image.load("assets/images/zombies/zombie2.png"),
@@ -41,54 +42,138 @@ def draw_text(text, font, color, x, y):
     text_rect = text_surf.get_rect(center=(x, y))
     window.blit(text_surf, text_rect)
 
-def play_game():
-    lives, score
-    window.blit(background_image, (0, 0))
-    draw_text(f"Score: {score}", game_font, YELLOW, WINDOW_WIDTH - 70, 20)
-    draw_text(f"Lives: {lives}", game_font, YELLOW, 70, 20)
+def generate_zombies(zombies):
+    zombies_path = "images/" + zombies + ".png"
+    data[zombies] = {
+        'img': pygame.image.load(zombies_path),
+        'x' : random.randint(100,500),          #where the zombies should be positioned on x-coordinate
+        'y' : 800,
+        'speed_x': random.randint(-10,10),      #how fast the zombies should move in x direction. Controls the diagonal movement of zombiess
+        'speed_y': random.randint(-80, -60),    #control the speed of zombiess in y-directionn ( UP )
+        'throw': False,                         #determines if the generated coordinate of the zombiess is outside the window or not. If outside, then it will be discarded
+        't': 0,                                 #manages the
+        'hit': False,
+    }
 
-    pygame.display.update()
+    if random.random() >= 0.75:     #Return the next random floating point number in the range [0.0, 1.0) to keep the zombiess inside the window
+        data[zombies]['throw'] = True
+    else:
+        data[zombies]['throw'] = False
 
-    running = True
-    while running:
+# Dictionary to hold the data the random zombies generation
+data = {}
+for zombies in zombies:
+    generate_zombies(zombies)
+
+def hide_cross_lives(x, y):
+    window.blit(pygame.image.load("images/red_lives.png"), (x, y))
+
+# Generic method to draw fonts on the screen
+font_name = pygame.font.match_font('comic.ttf')
+def draw_text(display, text, size, x, y):
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text, True, WHITE)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    window.blit(text_surface, text_rect)
+
+# draw players lives
+def draw_lives(display, x, y, lives, image) :
+    for i in range(lives) :
+        img = pygame.image.load(image)
+        img_rect = img.get_rect()       #gets the (x,y) coordinates of the cross icons (lives on the the top rightmost side)
+        img_rect.x = int(x + 35 * i)    #sets the next cross icon 35pixels awt from the previous one
+        img_rect.y = y                  #takes care of how many pixels the cross icon should be positioned from top of the screen
+        display.blit(img, img_rect)
+
+# show game over display & front display
+def show_gameover_screen():
+    window.blit(background_image, (0,0))
+    draw_text(window, "zombies NINJA!", 90, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 4)
+    if not game_over :
+        draw_text(window,"Score : " + str(score), 50, WINDOW_WIDTH / 2, WINDOW_HEIGHT /2)
+
+    draw_text(window, "Press a key to begin!", 64, WINDOW_WIDTH / 2, WINDOW_HEIGHT * 3 / 4)
+    pygame.display.flip()
+    waiting = True
+    while waiting:
+        clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pygame.quit()
+            if event.type == pygame.KEYUP:
+                waiting = False
 
-def menu():
+# Game Loop
+first_round = True
+game_over = True        #terminates the game While loop if more than 3-Bombs are cut
+game_running = True     #used to manage the game loop
+score_text = font.render('Score : ' + str(score), True, (255, 255, 255))
+
+while game_running :
+    if game_over :
+        if first_round :
+            show_gameover_screen()
+            first_round = False
+        game_over = False
+        player_lives = 3
+        draw_lives(window, 690, 5, player_lives, 'images/red_lives.png')
+        score = 0
+
+    for event in pygame.event.get():
+        # checking for closing window
+        if event.type == pygame.QUIT:
+            game_running = False
+
     window.blit(background_image, (0, 0))
-    draw_text("READY FOR ZOMBIE SLICER ?!",tittle_font, RED, WINDOW_WIDTH // 2.4, 50)
-    draw_text("Play Game", font, RED, WINDOW_WIDTH // 10, 150)
-    draw_text("Score", font, RED, WINDOW_WIDTH // 16, 200)
-    draw_text("Quit", font, RED, WINDOW_WIDTH // 18, 250)
+    window.blit(score_text, (0, 0))
+    draw_lives(window, 690, 5, player_lives, 'images/red_lives.png')
+
+    for key, value in data.items():
+        if value['throw']:
+            value['x'] += value['speed_x']          #moving the zombiess in x-coordinates
+            value['y'] += value['speed_y']          #moving the zombiess in y-coordinate
+            value['speed_y'] += (1 * value['t'])    #increasing y-corrdinate
+            value['t'] += 1                         #increasing speed_y for next loop
+
+            if value['y'] <= 800:
+                window.blit(value['img'], (value['x'], value['y']))    #displaying the zombies inside screen dynamically
+            else:
+                generate_zombies(key)
+
+            current_position = pygame.mouse.get_pos()   #gets the current coordinate (x, y) in pixels of the mouse
+
+            if not value['hit'] and current_position[0] > value['x'] and current_position[0] < value['x']+60 \
+                    and current_position[1] > value['y'] and current_position[1] < value['y']+60:
+                if key == 'bomb':
+                    player_lives -= 1
+                    if player_lives == 0:
+                        
+                        hide_cross_lives(690, 15)
+                    elif player_lives == 1 :
+                        hide_cross_lives(725, 15)
+                    elif player_lives == 2 :
+                        hide_cross_lives(760, 15)
+                    #if the user clicks bombs for three time, GAME OVER message should be displayed and the window should be reset
+                    if player_lives < 0 :
+                        show_gameover_screen()
+                        game_over = True
+
+                    half_zombies_path = "images/explosion.png"
+                else:
+                    half_zombies_path = "images/" + "half_" + key + ".png"
+
+                value['img'] = pygame.image.load(half_zombies_path)
+                value['speed_x'] += 10
+                if key != 'bomb' :
+                    score += 1
+                score_text = font.render('Score : ' + str(score), True, (255, 255, 255))
+                value['hit'] = True
+        else:
+            generate_zombies(key)
 
     pygame.display.update()
-
-    waiting_input = True
-
-    while waiting_input :
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEMOTION:
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                if 10 <= mouse_x <= 150 :
-                    if 130 <= mouse_y <= 170 :
-                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-                    elif 180 <= mouse_y <= 220 :
-                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-                    elif 230 <= mouse_y <= 270 :
-                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-                else : 
-                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_x, mouse_y = event.pos
-                if 0 <= mouse_x <= 200:
-                    if 130 <= mouse_y <= 170:
-                        play_game()
-                    elif 180 <= mouse_y <= 220:
+    clock.tick(FPS)      # keep loop running at the right speed (manages the frame/second. The loop should update afer every 1/12th pf the sec
                         
-                        pass
-                    elif 230 <= mouse_y <= 270:
-                        
-                        pygame.quit()
-                        exit()
-menu()
+
+pygame.quit()
