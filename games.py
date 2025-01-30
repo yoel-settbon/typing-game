@@ -29,7 +29,7 @@ font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 40)
 game_font = pygame.font.Font("assets/images/font/Impacted2.0.ttf", 30)
 display_font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 25)
 
-FPS = 20
+FPS = 1
 zombies = ["zombie1", "zombie2", "zombie3", "zombie4"]
 bonus = ["zombie5", "zombie6", "icecube"]
 
@@ -78,11 +78,11 @@ def play_game():
     def draw_zombies():
         for zombie in zombie_list:
             window.blit(zombie["image"], (zombie["x"], zombie["y"]))
-            draw_text(zombie["letter"], game_font, RED, zombie["x"] + 20, zombie["y"] -10)
+            draw_text(zombie["letter"], game_font, RED, zombie["x"] + 20, zombie["y"] - 10)
 
     spawn_zombie()
     waiting_input = True
-    while waiting_input == True:
+    while waiting_input:
         window.blit(background_image, (0, 0))
         draw_text("Press ECHAP to go back to the MENU", display_font, YELLOW, WINDOW_WIDTH // 2, 15)
         draw_text(f"Score: {score}", game_font, RED, WINDOW_WIDTH // 1.1, 20)
@@ -108,15 +108,27 @@ def play_game():
                             game_over()
 
         for zombie in zombie_list:
-            zombie["y"] == zombie_speed
+            zombie["y"] -= zombie_speed
             if zombie["y"] > WINDOW_HEIGHT:
                 zombie_list.remove(zombie)
                 lives -= 1
                 if lives == 0:
-                    game_over()
-                spawn_zombie()
-    pygame.display.update()
+                    spawn_zombie()
                 
+    try:
+        with open("scores.json", "r") as file:
+            scores = json.load(file)
+    except FileNotFoundError:
+        scores = []
+
+    scores.append({"score": score})
+
+    with open("scores.json", "w") as file:
+        json.dump(scores, file)
+    
+    pygame.display.update()
+
+     
 def history():
         window.blit(background_image, (0, 0))
         draw_text("SCORE HISTORY", tittle_font, RED, WINDOW_WIDTH // 4, 50)
