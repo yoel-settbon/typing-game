@@ -43,6 +43,21 @@ zombies = ["zombie1", "zombie2", "zombie3", "zombie4", "zombie5", "zombie6"]
 bonus = ["icecube"]
 bomb = ["man"]
 
+def menu_music():
+    pygame.mixer.music.stop
+    pygame.mixer.music.load('assets/audio/menu-music.wav')
+    pygame.mixer.music.play(-1)
+
+def scores_music():
+    pygame.mixer.music.stop
+    pygame.mixer.music.load('assets/audio/scores_theme.wav')
+    pygame.mixer.music.play(-1)
+
+def game_music():
+    pygame.mixer.music.stop
+    pygame.mixer.music.load('assets/audio/game-theme.wav')
+    pygame.mixer.music.play(-1)
+
 def load_scores():
     if os.path.exists(SCORES_FILE):
         with open(SCORES_FILE, "r", encoding="utf-8") as f:
@@ -94,6 +109,7 @@ def game_over(score):
                     history()
 
 def play_game():
+    game_music()
     lives = 5
     score = 0
     window.blit(background_image, (0, 0))
@@ -172,6 +188,7 @@ def play_game():
                     break
 
 def history():
+    scores_music()
     window.blit(background_image, (0, 0))
     draw_text("SCORE HISTORY", tittle_font, RED, WINDOW_WIDTH // 4, 50)
 
@@ -200,6 +217,7 @@ def history():
                     history()
 
 def menu():
+    menu_music()
     window.blit(background_image, (0, 0))
     draw_text("READY FOR ZOMBIE SLICER ?!", tittle_font, RED, WINDOW_WIDTH // 2.4, 50)
     draw_text("Play Game", font, RED, WINDOW_WIDTH // 10, 150)
