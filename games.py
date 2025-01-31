@@ -77,8 +77,8 @@ def play_game():
         zombie_image = random.choice(zombies_images)
         zombie_x = random.randint(150, WINDOW_WIDTH - 150)
         zombie_y = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 70)
-        speed_up = random.uniform(0.1, 0.3)
-        speed_down = random.uniform(0.4, 0.6)
+        speed_up = random.uniform(0.09, 0.12)
+        speed_down = random.uniform(0.2, 0.4)
         letter = chr(random.randint(65, 90))
         zombie_list.append({
             "image": zombie_image, 
