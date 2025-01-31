@@ -44,21 +44,25 @@ bonus = ["icecube"]
 bomb = ["man"]
 
 def menu_music():
+    """function to play the menu music"""
     pygame.mixer.music.stop
     pygame.mixer.music.load('assets/audio/menu-music.wav')
     pygame.mixer.music.play(-1)
 
 def scores_music():
+    """function to play scores music"""
     pygame.mixer.music.stop
     pygame.mixer.music.load('assets/audio/scores_theme.wav')
     pygame.mixer.music.play(-1)
 
 def game_music():
+    """function to play the game music"""
     pygame.mixer.music.stop
     pygame.mixer.music.load('assets/audio/game-theme.wav')
     pygame.mixer.music.play(-1)
 
 def load_scores():
+    """function to load the scores"""
     if os.path.exists(SCORES_FILE):
         with open(SCORES_FILE, "r", encoding="utf-8") as f:
             try:
@@ -68,6 +72,7 @@ def load_scores():
     return []
 
 def save_scores(score):
+    """function to save the scores"""
     scores = load_scores()
     scores.append({"score": score}) 
     scores = sorted(scores, key=lambda x: x["score"], reverse=True)
@@ -76,17 +81,20 @@ def save_scores(score):
         json.dump(scores, f, indent=4) 
 
 def show_scores():
+    """function to print the scores"""
     scores = load_scores()
     print("\n Meilleurs scores :")
     for i, entry in enumerate(scores[:10], 1):
         print(f"{i}. {entry['nom']} - {entry['score']}")
 
 def draw_text(text, font, color, x, y):
+    """function to draw the texts in the game"""
     text_surf = font.render(text, True, color)
     text_rect = text_surf.get_rect(center=(x, y))
     window.blit(text_surf, text_rect)
 
 def game_over(score):
+    """function to switch to game over menu"""
     save_scores(score)
 
     window.fill(BLACK)
@@ -109,6 +117,7 @@ def game_over(score):
                     history()
 
 def play_game():
+    """function to run the game"""
     game_music()
     lives = 5
     score = 0
@@ -188,6 +197,7 @@ def play_game():
                     break
 
 def history():
+    """function to run the scores menu"""
     scores_music()
     window.blit(background_image, (0, 0))
     draw_text("SCORE HISTORY", tittle_font, RED, WINDOW_WIDTH // 4, 50)
@@ -217,6 +227,7 @@ def history():
                     history()
 
 def menu():
+    """function to print the menu"""
     menu_music()
     window.blit(background_image, (0, 0))
     draw_text("READY FOR ZOMBIE SLICER ?!", tittle_font, RED, WINDOW_WIDTH // 2.4, 50)
