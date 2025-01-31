@@ -43,6 +43,16 @@ def menu_music():
     pygame.mixer.music.load('assets/audio/menu-theme.wav')
     pygame.mixer.music.play(-1)
 
+def scores_music():
+    pygame.mixer.music.stop
+    pygame.mixer.music.load('')
+    pygame.mixer.music.play(-1)
+
+def game_music():
+    pygame.mixer.music.stop
+    pygame.mixer.music.load('')
+    pygame.mixer.music.play
+
 def load_scores():
     if os.path.exists(SCORES_FILE):
         with open(SCORES_FILE, "r", encoding="utf-8") as f:
