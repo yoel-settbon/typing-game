@@ -76,7 +76,6 @@ def show_scores():
     for i, entry in enumerate(scores[:10], 1):
         print(f"{i}. {entry['nom']} - {entry['score']}")
 
-
 def draw_text(text, font, color, x, y):
     text_surf = font.render(text, True, color)
     text_rect = text_surf.get_rect(center=(x, y))
@@ -102,7 +101,6 @@ def game_over(score):
                     menu()
                 elif event.key == pygame.K_SPACE:
                     history()
-
 
 def play_game():
     game_music()
@@ -220,7 +218,6 @@ def history():
                     with open(SCORES_FILE, "w") as file:
                         json.dump([], file)
                     history()
-
 
 def menu():
     window.blit(background_image, (0, 0))
