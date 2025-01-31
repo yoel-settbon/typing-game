@@ -29,6 +29,12 @@ zombies_images = [
     pygame.image.load("assets/images/zombies/zombie-jet-pack.png")
 ]
 
+zombie_sounds = [
+    pygame.mixer.Sound("assets/audio/zombie1.wav"),
+    pygame.mixer.Sound("assets/audio/zombie2.wav"),
+    pygame.mixer.Sound("assets/audio/zombie3.wav"),
+]
+
 bonus_image = pygame.image.load("assets/images/bonus/ice-cube.png")
 
 bomb_image = pygame.image.load("assets/images/bombs/man.png")
@@ -135,6 +141,7 @@ def play_game():
     zombie_list = []
 
     def spawn_zombie():
+        random.choice(zombie_sounds).play()
         zombie_image = random.choice(zombies_images)
         zombie_x = random.randint(150, WINDOW_WIDTH - 150)
         
