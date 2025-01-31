@@ -43,17 +43,17 @@ def load_scores():
         with open(SCORES_FILE, "r", encoding="utf-8") as f:
             try:
                 return json.load(f)
-            except json.JSONDecodeError:  # Correction ici !
+            except json.JSONDecodeError:
                 return []
     return []
 
 def save_scores(score):
-    scores = load_scores()  # Charge les scores existants
-    scores.append({"score": score})  # Ajoute le nouveau score
-    scores = sorted(scores, key=lambda x: x["score"], reverse=True)  # Trie les scores
+    scores = load_scores()
+    scores.append({"score": score})
+    scores = sorted(scores, key=lambda x: x["score"], reverse=True)
 
     with open(SCORES_FILE, "w", encoding="utf-8") as f:
-        json.dump(scores, f, indent=4)  # Écriture propre
+        json.dump(scores, f, indent=4)
 
 def show_scores():
     scores = load_scores()
@@ -155,15 +155,14 @@ def play_game():
                     zombie["direction"] = "down"  
             elif zombie["direction"] == "down":
                 zombie["y"] += zombie["speed_down"]
-                if zombie["y"] > WINDOW_HEIGHT + 50:  # Si le zombie est hors de l'écran
-                    zombie_list.remove(zombie)  # Retirer le zombie de la liste
-                    lives -= 1  # Retirer une vie
+                if zombie["y"] > WINDOW_HEIGHT + 50:
+                    zombie_list.remove(zombie)
+                    lives -= 1
                     if lives == 0:
-                        game_over()  # Si plus de vies, fin du jeu
-                    spawn_zombie()  # Faire apparaître un nouveau zombie
-                    break  # Sortir de la boucle pour ne pas modifier plusieurs zombies en même temps
+                        game_over()
+                    spawn_zombie()
+                    break
 
-    # Sauvegarde du score après la fin du jeu
     try:
         with open("scores.json", "r") as file:
             scores = json.load(file)
@@ -181,13 +180,13 @@ def history():
     window.blit(background_image, (0, 0))
     draw_text("SCORE HISTORY", tittle_font, RED, WINDOW_WIDTH // 2, 50)
 
-    scores = load_scores()  # Charger les scores
-    scores = sorted(scores, key=lambda x: x["score"], reverse=True)  # Trier les scores
+    scores = load_scores()
+    scores = sorted(scores, key=lambda x: x["score"], reverse=True)
 
-    y_offset = 120  # Position de départ pour afficher les scores
-    for i, entry in enumerate(scores[:10]):  # Afficher les 10 meilleurs scores
+    y_offset = 120
+    for i, entry in enumerate(scores[:10]):
         draw_text(f"{i+1}. Score: {entry['score']}", game_font, RED, WINDOW_WIDTH // 2, y_offset)
-        y_offset += 40  # Décalage vertical
+        y_offset += 40
 
     draw_text("Press 'D' to delete history", game_font, YELLOW, WINDOW_WIDTH // 2, 450)
     draw_text("Press ECHAP to go back to the MENU", display_font, YELLOW, WINDOW_WIDTH // 2, 470)
@@ -202,8 +201,8 @@ def history():
                     menu()
                 elif event.key == pygame.K_d:
                     with open(SCORES_FILE, "w") as file:
-                        json.dump([], file)  # Réinitialise le fichier JSON
-                    history()  # Recharge l'affichage
+                        json.dump([], file)
+                    history()
 
 
 def menu():
