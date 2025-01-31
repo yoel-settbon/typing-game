@@ -43,6 +43,11 @@ zombies = ["zombie1", "zombie2", "zombie3", "zombie4", "zombie5", "zombie6"]
 bonus = ["icecube"]
 bomb = ["man"]
 
+def game_over_music():
+    pygame.mixer.music.stop
+    pygame.mixer.music.load('assets/audio/game-over-music.wav')
+    pygame.mixer.music.play()
+
 def menu_music():
     """function to play the menu music"""
     pygame.mixer.music.stop
@@ -95,7 +100,7 @@ def draw_text(text, font, color, x, y):
 
 def game_over(score):
     """function to switch to game over menu"""
-    pygame.mixer.music.stop()
+    game_over_music()
     save_scores(score)
 
     window.fill(BLACK)
