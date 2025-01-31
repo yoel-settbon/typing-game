@@ -208,6 +208,7 @@ def play_game():
                     lives -= 1
                     if lives == 0:
                         game_over(score)
+                    spawn_zombie()
                     break
 
 def history():
