@@ -192,8 +192,7 @@ def play_game():
                     zombie_list.remove(zombie)
                     lives -= 1
                     if lives == 0:
-                        game_over(score) 
-                    spawn_zombie()  
+                        game_over(score)
                     break
 
 def history():
