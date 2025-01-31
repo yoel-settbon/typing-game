@@ -1,6 +1,7 @@
 import pygame
 import random
 import json
+import time
 
 pygame.init()
 
@@ -69,13 +70,15 @@ def play_game():
     draw_text(f"Lives: {lives}", game_font, RED, WINDOW_WIDTH // 13.5, 20)
     
     zombie_list = []
+    last_spawn_time = time.time()
+    spawn_interval = 5 
 
     def spawn_zombie():
         zombie_image = random.choice(zombies_images)
         zombie_x = random.randint(150, WINDOW_WIDTH - 150)
         zombie_y = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 70)
-        speed_up = random.uniform(0.1, 0.18)
-        speed_down = random.uniform(0.19, 0.27)
+        speed_up = random.uniform(0.1, 0.3)
+        speed_down = random.uniform(0.4, 0.6)
         letter = chr(random.randint(65, 90))
         zombie_list.append({
             "image": zombie_image, 
@@ -87,12 +90,15 @@ def play_game():
             "direction": "up"
         })
 
+    def spawn_multiple_zombies():
+        for _ in range(random.randint(1, 4)): 
+            spawn_zombie()
+
     def draw_zombies():
         for zombie in zombie_list:
             window.blit(zombie["image"], (zombie["x"], zombie["y"]))
             draw_text(zombie["letter"], game_font, RED, zombie["x"] + 20, zombie["y"] - 10)
 
-    spawn_zombie()
     waiting_input = True
     while waiting_input:
         window.blit(background_image, (0, 0))
@@ -101,6 +107,17 @@ def play_game():
         draw_text(f"Lives: {lives}", game_font, RED, WINDOW_WIDTH // 13.5, 20)
         draw_zombies()
         pygame.display.update()
+
+        current_time = time.time()
+
+        if current_time - last_spawn_time > spawn_interval:
+
+            if random.random() < 0.2:
+                spawn_multiple_zombies()
+            else:
+                spawn_zombie() 
+
+            last_spawn_time = current_time  
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -112,7 +129,7 @@ def play_game():
                         if zombie["letter"] == key_pressed:
                             zombie_list.remove(zombie)
                             score += 1
-                            spawn_zombie()
+                            spawn_zombie() 
                             break
                     else:
                         lives -= 1
@@ -126,27 +143,13 @@ def play_game():
                     zombie["direction"] = "down"  
             elif zombie["direction"] == "down":
                 zombie["y"] += zombie["speed_down"]
-                if zombie["y"] > WINDOW_HEIGHT + 50:  # Si le zombie est hors de l'écran
-                    zombie_list.remove(zombie)  # Retirer le zombie de la liste
-                    lives -= 1  # Retirer une vie
+                if zombie["y"] > WINDOW_HEIGHT + 50:
+                    zombie_list.remove(zombie) 
+                    lives -= 1  
                     if lives == 0:
-                        game_over()  # Si plus de vies, fin du jeu
-                    spawn_zombie()  # Faire apparaître un nouveau zombie
-                    break  # Sortir de la boucle pour ne pas modifier plusieurs zombies en même temps
-
-    # Sauvegarde du score après la fin du jeu
-    try:
-        with open("scores.json", "r") as file:
-            scores = json.load(file)
-    except FileNotFoundError:
-        scores = []
-
-    scores.append({"score": score})
-
-    with open("scores.json", "w") as file:
-        json.dump(scores, file)
-    
-    pygame.display.update()
+                        game_over() 
+                    spawn_zombie() 
+                    break 
 
 def history():
     window.blit(background_image, (0, 0))
