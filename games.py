@@ -38,6 +38,11 @@ FPS = 20
 zombies = ["zombie1", "zombie2", "zombie3", "zombie4", "zombie5", "zombie6"]
 bonus = ["icecube"]
 
+def menu_music():
+    pygame.mixer.music.stop
+    pygame.mixer.music.load('assets/audio/menu-theme.wav')
+    pygame.mixer.music.play(-1)
+
 def load_scores():
     if os.path.exists(SCORES_FILE):
         with open(SCORES_FILE, "r", encoding="utf-8") as f:
