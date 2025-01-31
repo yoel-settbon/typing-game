@@ -30,7 +30,6 @@ zombies_images = [
 ]
 
 bonus_image = pygame.image.load("assets/images/bonus/ice-cube.png")
-
 bomb_image = pygame.image.load("assets/images/bombs/man.png")
 
 tittle_font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 70)
@@ -38,7 +37,6 @@ font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 40)
 game_font = pygame.font.Font("assets/images/font/Impacted2.0.ttf", 30)
 display_font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 25)
 
-FPS = 20
 zombies = ["zombie1", "zombie2", "zombie3", "zombie4", "zombie5", "zombie6"]
 bonus = ["icecube"]
 bomb = ["man"]
@@ -133,7 +131,7 @@ def play_game():
         zombie_x = random.randint(150, WINDOW_WIDTH - 150)
         
         zombie_max_y = random.randint(0, WINDOW_HEIGHT // 2)
-        zombie_y = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 70)
+        zombie_y = random.randint(WINDOW_HEIGHT + 25, WINDOW_HEIGHT + 50)
         speed_up = random.uniform(0.1, 0.18)
         speed_down = random.uniform(0.2, 0.24)
         letter = chr(random.randint(65, 90))
@@ -193,6 +191,7 @@ def play_game():
                     lives -= 1
                     if lives == 0:
                         game_over(score)
+                    spawn_zombie()
                     break
 
 def history():
