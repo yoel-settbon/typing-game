@@ -141,6 +141,7 @@ def play_game():
     zombie_list = []
 
     def spawn_zombie():
+        """function to randomly spawn zombies"""
         random.choice(zombie_sounds).play()
         zombie_image = random.choice(zombies_images)
         zombie_x = random.randint(150, WINDOW_WIDTH - 150)
@@ -163,6 +164,7 @@ def play_game():
         })
 
     def draw_zombies():
+        """function to draw zombies"""
         for zombie in zombie_list:
             window.blit(zombie["image"], (zombie["x"], zombie["y"]))
             draw_text(zombie["letter"], game_font, RED, zombie["x"] + 20, zombie["y"] - 10)
