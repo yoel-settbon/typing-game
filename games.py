@@ -95,6 +95,7 @@ def draw_text(text, font, color, x, y):
 
 def game_over(score):
     """function to switch to game over menu"""
+    pygame.mixer.music.stop()
     save_scores(score)
 
     window.fill(BLACK)
