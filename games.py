@@ -218,6 +218,7 @@ def menu():
     draw_text("Quit", font, RED, WINDOW_WIDTH // 18, 250)
 
     pygame.display.update()
+    menu_music()
 
     waiting_input = True
 
