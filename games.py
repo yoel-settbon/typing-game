@@ -45,13 +45,13 @@ def menu_music():
 
 def scores_music():
     pygame.mixer.music.stop
-    pygame.mixer.music.load('')
+    pygame.mixer.music.load('assets/audio/scores_theme.wav')
     pygame.mixer.music.play(-1)
 
 def game_music():
     pygame.mixer.music.stop
-    pygame.mixer.music.load('')
-    pygame.mixer.music.play
+    pygame.mixer.music.load('assets/audio/game-music.wav')
+    pygame.mixer.music.play(-1)
 
 def load_scores():
     if os.path.exists(SCORES_FILE):
@@ -105,6 +105,7 @@ def game_over(score):
 
 
 def play_game():
+    game_music()
     lives = 5
     score = 0
     window.blit(background_image, (0, 0))
@@ -192,6 +193,7 @@ def play_game():
     pygame.display.update()
 
 def history():
+    scores_music()
     window.blit(background_image, (0, 0))
     draw_text("SCORE HISTORY", tittle_font, RED, WINDOW_WIDTH // 2, 50)
 
