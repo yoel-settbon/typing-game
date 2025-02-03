@@ -165,6 +165,9 @@ def play_game():
                 "direction": "up"
             })
 
+        for sound in zombie_sounds:
+            sound.set_volume(0.1)
+
     def draw_zombies():
         """function to draw zombies"""
         for zombie in zombie_list:
