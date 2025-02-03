@@ -49,7 +49,7 @@ zombies = ["zombie1", "zombie2", "zombie3", "zombie4", "zombie5", "zombie6"]
 bonus = ["icecube"]
 bomb = ["man"]
 
-MAX_ZOMBIES = 3  # Limitation du nombre maximum de zombies à l'écran
+MAX_ZOMBIES = 3
 
 def game_over_music():
     pygame.mixer.music.stop()
@@ -135,8 +135,8 @@ def play_game():
     game_music()
     lives = 5
     score = 0
-    combo_count = 0  # Initialisation du combo
-    combo_multiplier = 1  # Initialisation du multiplicateur de combo
+    combo_count = 0
+    combo_multiplier = 1
     window.blit(background_image, (0, 0))
     draw_text("Press ECHAP to go back to the MENU", display_font, YELLOW, WINDOW_WIDTH // 2, 15)
     draw_text(f"Score: {score}", game_font, RED, WINDOW_WIDTH // 1.1, 20)
@@ -144,11 +144,11 @@ def play_game():
     draw_text(f"Combo: {combo_count}x", game_font, YELLOW, WINDOW_WIDTH // 2, 50)
 
     zombie_list = []
-    eliminated_zombies = 0  # Compteur des zombies éliminés avant qu'ils tombent
+    eliminated_zombies = 0
 
     def spawn_zombie(number_of_zombies=1):
         """function to randomly spawn zombies"""
-        if len(zombie_list) < MAX_ZOMBIES:  # Vérifie si le nombre de zombies est inférieur à la limite
+        if len(zombie_list) < MAX_ZOMBIES:
             for _ in range(number_of_zombies):
                 random.choice(zombie_sounds).play()
                 zombie_image = random.choice(zombies_images)
@@ -204,17 +204,17 @@ def play_game():
                             zombie_list.remove(zombie)
                             score += 1
                             eliminated_zombies += 1 
-                            combo_count += 1  # Incrémente le combo
+                            combo_count += 1
                             if combo_count > 1:
-                                combo_multiplier = combo_count  # Applique le multiplicateur
+                                combo_multiplier = combo_count
                             spawn_zombie(random.randint(1, 2)) 
                             zombie_found = True
                             break
 
                     if not zombie_found:
                         lives -= 1
-                        combo_count = 0  # Réinitialise le combo si une erreur est commise
-                        combo_multiplier = 1  # Réinitialise le multiplicateur
+                        combo_count = 0
+                        combo_multiplier = 1
                         if lives == 0:
                             game_over(score)
 
@@ -235,8 +235,8 @@ def play_game():
                 if zombie["y"] > WINDOW_HEIGHT + 50:
                     zombie_list.remove(zombie)
                     lives -= 1
-                    combo_count = 0  # Réinitialise le combo si le zombie échappe
-                    combo_multiplier = 1  # Réinitialise le multiplicateur
+                    combo_count = 0
+                    combo_multiplier = 1
                     if lives == 0:
                         game_over(score)
                     spawn_zombie(random.randint(1, 2))  
