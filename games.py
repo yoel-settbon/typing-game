@@ -35,23 +35,17 @@ zombie_sounds = [
     pygame.mixer.Sound("assets/audio/zombie3.wav"),
 ]
 
-bonus_image = pygame.image.load("assets/images/bonus/ice-cube.png")
-
-bomb_image = pygame.image.load("assets/images/bombs/man.png")
-
 tittle_font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 70)
 font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 40)
 game_font = pygame.font.Font("assets/images/font/Impacted2.0.ttf", 30)
 display_font = pygame.font.Font("assets/images/font/Poker Nightmare.ttf", 25)
 
-FPS = 20
 zombies = ["zombie1", "zombie2", "zombie3", "zombie4", "zombie5", "zombie6"]
-bonus = ["icecube"]
-bomb = ["man"]
 
 MAX_ZOMBIES = 3
 
 def game_over_music():
+    """function to play game over music"""
     pygame.mixer.music.stop()
     pygame.mixer.music.load('assets/audio/game-over-music.wav')
     pygame.mixer.music.play()
