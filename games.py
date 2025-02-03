@@ -49,6 +49,8 @@ zombies = ["zombie1", "zombie2", "zombie3", "zombie4", "zombie5", "zombie6"]
 bonus = ["icecube"]
 bomb = ["man"]
 
+MAX_ZOMBIES = 3  # Limitation du nombre maximum de zombies à l'écran
+
 def game_over_music():
     pygame.mixer.music.stop()
     pygame.mixer.music.load('assets/audio/game-over-music.wav')
@@ -133,37 +135,44 @@ def play_game():
     game_music()
     lives = 5
     score = 0
+    combo_count = 0  # Initialisation du combo
+    combo_multiplier = 1  # Initialisation du multiplicateur de combo
     window.blit(background_image, (0, 0))
     draw_text("Press ECHAP to go back to the MENU", display_font, YELLOW, WINDOW_WIDTH // 2, 15)
     draw_text(f"Score: {score}", game_font, RED, WINDOW_WIDTH // 1.1, 20)
     draw_text(f"Lives: {lives}", game_font, RED, WINDOW_WIDTH // 13.5, 20)
-    
+    draw_text(f"Combo: {combo_count}x", game_font, YELLOW, WINDOW_WIDTH // 2, 50)
+
     zombie_list = []
     eliminated_zombies = 0  # Compteur des zombies éliminés avant qu'ils tombent
 
     def spawn_zombie(number_of_zombies=1):
         """function to randomly spawn zombies"""
-        for _ in range(number_of_zombies):
-            random.choice(zombie_sounds).play()
-            zombie_image = random.choice(zombies_images)
-            zombie_x = random.randint(150, WINDOW_WIDTH - 150)
-            
-            zombie_max_y = random.randint(0, WINDOW_HEIGHT // 2)
-            zombie_y = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 70)
-            speed_up = random.uniform(0.1, 0.18)
-            speed_down = random.uniform(0.2, 0.24)
-            letter = chr(random.randint(65, 90))
-            
-            zombie_list.append({
-                "image": zombie_image, 
-                "x": zombie_x, 
-                "y": zombie_y, 
-                "max_y": zombie_max_y, 
-                "letter": letter, 
-                "speed_up": speed_up,
-                "speed_down": speed_down, 
-                "direction": "up"
-            })
+        if len(zombie_list) < MAX_ZOMBIES:  # Vérifie si le nombre de zombies est inférieur à la limite
+            for _ in range(number_of_zombies):
+                random.choice(zombie_sounds).play()
+                zombie_image = random.choice(zombies_images)
+                zombie_x = random.randint(150, WINDOW_WIDTH - 150)
+                
+                zombie_max_y = random.randint(0, WINDOW_HEIGHT // 2)
+                zombie_y = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 70)
+                speed_up = random.uniform(0.1, 0.18)
+                speed_down = random.uniform(0.2, 0.24)
+                letter = chr(random.randint(65, 90))
+                
+                zombie_list.append({
+                    "image": zombie_image, 
+                    "x": zombie_x, 
+                    "y": zombie_y, 
+                    "max_y": zombie_max_y, 
+                    "letter": letter, 
+                    "speed_up": speed_up,
+                    "speed_down": speed_down, 
+                    "direction": "up"
+                })
+
+        for sound in zombie_sounds:
+            sound.set_volume(0.1)
 
     def draw_zombies():
         """function to draw zombies"""
@@ -179,6 +188,7 @@ def play_game():
         draw_text("Press ECHAP to go back to the MENU", display_font, YELLOW, WINDOW_WIDTH // 2, 15)
         draw_text(f"Score: {score}", game_font, RED, WINDOW_WIDTH // 1.1, 20)
         draw_text(f"Lives: {lives}", game_font, RED, WINDOW_WIDTH // 13.5, 20)
+        draw_text(f"Combo: {combo_count}x", game_font, YELLOW, WINDOW_WIDTH // 2, 50)
         draw_zombies()
         pygame.display.update()
 
@@ -188,15 +198,27 @@ def play_game():
                     menu()
                 else:
                     key_pressed = chr(event.key).upper()
+                    zombie_found = False
                     for zombie in zombie_list:
                         if zombie["letter"] == key_pressed:
                             zombie_list.remove(zombie)
                             score += 1
                             eliminated_zombies += 1 
+<<<<<<< HEAD
                             spawn_zombie(random.randint(1, 1)) 
+=======
+                            combo_count += 1  # Incrémente le combo
+                            if combo_count > 1:
+                                combo_multiplier = combo_count  # Applique le multiplicateur
+                            spawn_zombie(random.randint(1, 2)) 
+                            zombie_found = True
+>>>>>>> 5b560770ffc64eb9a3fc5dd5882f7bc7c2d60da2
                             break
-                    else:
+
+                    if not zombie_found:
                         lives -= 1
+                        combo_count = 0  # Réinitialise le combo si une erreur est commise
+                        combo_multiplier = 1  # Réinitialise le multiplicateur
                         if lives == 0:
                             game_over(score)
 
@@ -217,10 +239,13 @@ def play_game():
                 if zombie["y"] > WINDOW_HEIGHT + 50:
                     zombie_list.remove(zombie)
                     lives -= 1
+                    combo_count = 0  # Réinitialise le combo si le zombie échappe
+                    combo_multiplier = 1  # Réinitialise le multiplicateur
                     if lives == 0:
                         game_over(score)
                     spawn_zombie(random.randint(1, 1))  
                     break
+
 
 def history():
     """function to run the scores menu"""
