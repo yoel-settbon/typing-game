@@ -242,7 +242,6 @@ def play_game():
                     spawn_zombie(random.randint(1, 2))  
                     break
 
-
 def history():
     """function to run the scores menu"""
     scores_music()
