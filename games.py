@@ -139,7 +139,7 @@ def play_game():
     draw_text(f"Lives: {lives}", game_font, RED, WINDOW_WIDTH // 13.5, 20)
     
     zombie_list = []
-    eliminated_zombies = 0  # Compteur des zombies éliminés avant qu'ils tombent
+    eliminated_zombies = 0
 
     def spawn_zombie(number_of_zombies=1):
         """function to randomly spawn zombies"""
@@ -148,7 +148,7 @@ def play_game():
             zombie_image = random.choice(zombies_images)
             zombie_x = random.randint(150, WINDOW_WIDTH - 150)
             
-            zombie_max_y = random.randint(0, WINDOW_HEIGHT // 2)
+            zombie_max_y = random.randint(0, WINDOW_HEIGHT // 3)
             zombie_y = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 70)
             speed_up = random.uniform(0.1, 0.18)
             speed_down = random.uniform(0.2, 0.24)
