@@ -50,25 +50,25 @@ bonus = ["icecube"]
 bomb = ["man"]
 
 def game_over_music():
-    pygame.mixer.music.stop
+    pygame.mixer.music.stop()
     pygame.mixer.music.load('assets/audio/game-over-music.wav')
     pygame.mixer.music.play()
 
 def menu_music():
     """function to play the menu music"""
-    pygame.mixer.music.stop
+    pygame.mixer.music.stop()
     pygame.mixer.music.load('assets/audio/menu-music.wav')
     pygame.mixer.music.play(-1)
 
 def scores_music():
     """function to play scores music"""
-    pygame.mixer.music.stop
+    pygame.mixer.music.stop()
     pygame.mixer.music.load('assets/audio/scores_theme.wav')
     pygame.mixer.music.play(-1)
 
 def game_music():
     """function to play the game music"""
-    pygame.mixer.music.stop
+    pygame.mixer.music.stop()
     pygame.mixer.music.load('assets/audio/game-theme.wav')
     pygame.mixer.music.play(-1)
 
@@ -139,29 +139,31 @@ def play_game():
     draw_text(f"Lives: {lives}", game_font, RED, WINDOW_WIDTH // 13.5, 20)
     
     zombie_list = []
+    eliminated_zombies = 0  # Compteur des zombies éliminés avant qu'ils tombent
 
-    def spawn_zombie():
+    def spawn_zombie(number_of_zombies=1):
         """function to randomly spawn zombies"""
-        random.choice(zombie_sounds).play()
-        zombie_image = random.choice(zombies_images)
-        zombie_x = random.randint(150, WINDOW_WIDTH - 150)
-        
-        zombie_max_y = random.randint(0, WINDOW_HEIGHT // 2)
-        zombie_y = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 70)
-        speed_up = random.uniform(0.1, 0.18)
-        speed_down = random.uniform(0.2, 0.24)
-        letter = chr(random.randint(65, 90))
-        
-        zombie_list.append({
-            "image": zombie_image, 
-            "x": zombie_x, 
-            "y": zombie_y, 
-            "max_y": zombie_max_y, 
-            "letter": letter, 
-            "speed_up": speed_up,
-            "speed_down": speed_down, 
-            "direction": "up"
-        })
+        for _ in range(number_of_zombies):
+            random.choice(zombie_sounds).play()
+            zombie_image = random.choice(zombies_images)
+            zombie_x = random.randint(150, WINDOW_WIDTH - 150)
+            
+            zombie_max_y = random.randint(0, WINDOW_HEIGHT // 2)
+            zombie_y = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 70)
+            speed_up = random.uniform(0.1, 0.18)
+            speed_down = random.uniform(0.2, 0.24)
+            letter = chr(random.randint(65, 90))
+            
+            zombie_list.append({
+                "image": zombie_image, 
+                "x": zombie_x, 
+                "y": zombie_y, 
+                "max_y": zombie_max_y, 
+                "letter": letter, 
+                "speed_up": speed_up,
+                "speed_down": speed_down, 
+                "direction": "up"
+            })
 
     def draw_zombies():
         """function to draw zombies"""
@@ -169,7 +171,8 @@ def play_game():
             window.blit(zombie["image"], (zombie["x"], zombie["y"]))
             draw_text(zombie["letter"], game_font, RED, zombie["x"] + 20, zombie["y"] - 10)
 
-    spawn_zombie()
+    spawn_zombie(random.randint(1, 2))
+    
     waiting_input = True
     while waiting_input:
         window.blit(background_image, (0, 0))
@@ -189,12 +192,20 @@ def play_game():
                         if zombie["letter"] == key_pressed:
                             zombie_list.remove(zombie)
                             score += 1
-                            spawn_zombie()
+                            eliminated_zombies += 1 
+                            spawn_zombie(random.randint(1, 2)) 
                             break
                     else:
                         lives -= 1
                         if lives == 0:
                             game_over(score)
+
+        if eliminated_zombies == 3:
+            score += 5
+            eliminated_zombies = 0
+        elif eliminated_zombies == 4:
+            score += 8
+            eliminated_zombies = 0
 
         for zombie in zombie_list[:]:
             if zombie["direction"] == "up":
@@ -208,7 +219,7 @@ def play_game():
                     lives -= 1
                     if lives == 0:
                         game_over(score)
-                    spawn_zombie()
+                    spawn_zombie(random.randint(1, 2))  
                     break
 
 def history():
