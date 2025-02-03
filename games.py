@@ -171,7 +171,7 @@ def play_game():
             window.blit(zombie["image"], (zombie["x"], zombie["y"]))
             draw_text(zombie["letter"], game_font, RED, zombie["x"] + 20, zombie["y"] - 10)
 
-    spawn_zombie(random.randint(1, 2))
+    spawn_zombie(random.randint(1, 1))
     
     waiting_input = True
     while waiting_input:
@@ -193,7 +193,7 @@ def play_game():
                             zombie_list.remove(zombie)
                             score += 1
                             eliminated_zombies += 1 
-                            spawn_zombie(random.randint(1, 2)) 
+                            spawn_zombie(random.randint(1, 1)) 
                             break
                     else:
                         lives -= 1
@@ -219,7 +219,7 @@ def play_game():
                     lives -= 1
                     if lives == 0:
                         game_over(score)
-                    spawn_zombie(random.randint(1, 2))  
+                    spawn_zombie(random.randint(1, 1))  
                     break
 
 def history():
