@@ -49,6 +49,8 @@ zombies = ["zombie1", "zombie2", "zombie3", "zombie4", "zombie5", "zombie6"]
 bonus = ["icecube"]
 bomb = ["man"]
 
+MAX_ZOMBIES = 3  # Limitation du nombre maximum de zombies à l'écran
+
 def game_over_music():
     pygame.mixer.music.stop()
     pygame.mixer.music.load('assets/audio/game-over-music.wav')
@@ -143,27 +145,28 @@ def play_game():
 
     def spawn_zombie(number_of_zombies=1):
         """function to randomly spawn zombies"""
-        for _ in range(number_of_zombies):
-            random.choice(zombie_sounds).play()
-            zombie_image = random.choice(zombies_images)
-            zombie_x = random.randint(150, WINDOW_WIDTH - 150)
-            
-            zombie_max_y = random.randint(0, WINDOW_HEIGHT // 2)
-            zombie_y = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 70)
-            speed_up = random.uniform(0.1, 0.18)
-            speed_down = random.uniform(0.2, 0.24)
-            letter = chr(random.randint(65, 90))
-            
-            zombie_list.append({
-                "image": zombie_image, 
-                "x": zombie_x, 
-                "y": zombie_y, 
-                "max_y": zombie_max_y, 
-                "letter": letter, 
-                "speed_up": speed_up,
-                "speed_down": speed_down, 
-                "direction": "up"
-            })
+        if len(zombie_list) < MAX_ZOMBIES:  # Vérifie si le nombre de zombies est inférieur à la limite
+            for _ in range(number_of_zombies):
+                random.choice(zombie_sounds).play()
+                zombie_image = random.choice(zombies_images)
+                zombie_x = random.randint(150, WINDOW_WIDTH - 150)
+                
+                zombie_max_y = random.randint(0, WINDOW_HEIGHT // 2)
+                zombie_y = random.randint(WINDOW_HEIGHT + 50, WINDOW_HEIGHT + 70)
+                speed_up = random.uniform(0.1, 0.18)
+                speed_down = random.uniform(0.2, 0.24)
+                letter = chr(random.randint(65, 90))
+                
+                zombie_list.append({
+                    "image": zombie_image, 
+                    "x": zombie_x, 
+                    "y": zombie_y, 
+                    "max_y": zombie_max_y, 
+                    "letter": letter, 
+                    "speed_up": speed_up,
+                    "speed_down": speed_down, 
+                    "direction": "up"
+                })
 
         for sound in zombie_sounds:
             sound.set_volume(0.1)
